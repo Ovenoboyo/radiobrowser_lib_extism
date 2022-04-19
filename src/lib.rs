@@ -2,6 +2,10 @@ use reqwest;
 use serde::Deserialize;
 use std::error::Error;
 
+use async_std_resolver::proto::rr::RecordType;
+use async_std_resolver::proto::xfer::DnsRequestOptions;
+use async_std_resolver::{config, resolver};
+
 #[derive(Debug, Deserialize)]
 pub struct ApiConfig {
     pub check_enabled: bool,
@@ -28,20 +32,16 @@ pub struct ApiConfig {
     pub language_to_code_filepath: String,
 }
 
-pub async fn get_server_config() -> Result<ApiConfig, Box<dyn Error>> {
+pub async fn get_server_config<P: AsRef<str>>(server: P) -> Result<ApiConfig, Box<dyn Error>> {
     let client = reqwest::Client::new();
     let res = client
-        .post("https://de1.api.radio-browser.info/json/config")
+        .post(format!("https://{}/json/config", server.as_ref()))
         .send()
         .await?
         .json::<ApiConfig>()
         .await?;
     Ok(res)
 }
-
-use async_std_resolver::proto::rr::RecordType;
-use async_std_resolver::proto::xfer::DnsRequestOptions;
-use async_std_resolver::{config, resolver};
 
 pub async fn get_servers() -> Result<Vec<String>, Box<dyn Error>> {
     // Construct a new Resolver with default configuration options
@@ -67,16 +67,7 @@ pub async fn get_servers() -> Result<Vec<String>, Box<dyn Error>> {
     let list = response
         .iter()
         .filter_map(|entry| entry.as_srv())
-        .map(|entry| entry.target().to_string())
+        .map(|entry| entry.target().to_string().trim_matches('.').to_string())
         .collect();
     Ok(list)
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }
