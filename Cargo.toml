@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 async-std = { version = "*", features = ["attributes", "tokio1"] }
+async-std-resolver = "0.21.2"
+chrono = { version = "0.4.19", features = ["serde"] }
+rand = { version = "0.8.5" }
 reqwest = { version = "0.11.10", features = ["json"] }
 serde = { version = "1.0.136", features = ["derive"] }
-async-std-resolver = "0.21.2"
