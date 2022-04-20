@@ -1,6 +1,7 @@
 use reqwest;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::error::Error;
 
 use rand::seq::SliceRandom;
@@ -14,7 +15,7 @@ use chrono::DateTime;
 use chrono::Utc;
 
 #[derive(PartialEq, Deserialize, Debug)]
-pub struct Station {
+pub struct ApiStation {
     pub changeuuid: String,
     pub stationuuid: String,
     pub serveruuid: Option<String>,
@@ -102,6 +103,40 @@ pub struct ApiConfig {
     pub language_to_code_filepath: String,
 }
 
+#[derive(Clone, Debug)]
+pub struct SearchBuilder {
+    map: HashMap<String, String>,
+    api: RadioBrowserAPI,
+}
+
+impl SearchBuilder {
+    pub fn new(api: RadioBrowserAPI) -> Self {
+        SearchBuilder {
+            api,
+            map: HashMap::new(),
+        }
+    }
+
+    pub fn name<P: AsRef<str>>(mut self, name: P) -> Self {
+        self.map
+            .insert(String::from("name"), name.as_ref().to_string());
+        self
+    }
+
+    pub fn countrycode<P: AsRef<str>>(mut self, countrycode: P) -> Self {
+        self.map.insert(
+            String::from("countrycode"),
+            countrycode.as_ref().to_string(),
+        );
+        self
+    }
+
+    pub async fn send(mut self) -> Result<Vec<ApiStation>, Box<dyn Error>> {
+        Ok(self.api.send("/json/stations/search", self.map).await?)
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct RadioBrowserAPI {
     servers: Vec<String>,
     current: usize,
@@ -124,22 +159,16 @@ impl RadioBrowserAPI {
         }
     }
 
-    pub async fn post_api<P: DeserializeOwned, O: AsRef<str>>(
+    pub async fn post_api<P: DeserializeOwned, A: AsRef<str>>(
         &mut self,
-        endpoint: O,
+        endpoint: A,
     ) -> Result<P, Box<dyn Error>> {
-        let client = reqwest::Client::new();
-        let res = client
-            .post(format!(
-                "{}{}",
-                self.get_current_server(),
-                endpoint.as_ref()
-            ))
-            .send()
-            .await?
-            .json::<P>()
-            .await?;
-        Ok(res)
+        let mapjson = HashMap::new();
+        post_api(self.get_current_server(), endpoint.as_ref(), mapjson).await
+    }
+
+    pub fn search(&self) -> SearchBuilder {
+        SearchBuilder::new(self.clone())
     }
 
     pub async fn get_server_config(&mut self) -> Result<ApiConfig, Box<dyn Error>> {
@@ -148,6 +177,14 @@ impl RadioBrowserAPI {
 
     pub async fn get_countries(&mut self) -> Result<Vec<ApiCountry>, Box<dyn Error>> {
         Ok(self.post_api("/json/countries").await?)
+    }
+
+    pub async fn send<P: AsRef<str>, Q: DeserializeOwned>(
+        &mut self,
+        endpoint: P,
+        mapjson: HashMap<String, String>,
+    ) -> Result<Q, Box<dyn Error>> {
+        post_api(self.get_current_server(), endpoint, mapjson).await
     }
 
     pub async fn get_countries_filtered<P: AsRef<str>>(
@@ -182,4 +219,20 @@ impl RadioBrowserAPI {
         println!("Servers: {:?}", list);
         Ok(list)
     }
+}
+
+pub async fn post_api<P: DeserializeOwned, A: AsRef<str>, B: AsRef<str>>(
+    server: A,
+    endpoint: B,
+    mapjson: HashMap<String, String>,
+) -> Result<P, Box<dyn Error>> {
+    let client = reqwest::Client::new();
+    let res = client
+        .post(format!("{}{}", server.as_ref(), endpoint.as_ref()))
+        .json(&mapjson)
+        .send()
+        .await?
+        .json::<P>()
+        .await?;
+    Ok(res)
 }

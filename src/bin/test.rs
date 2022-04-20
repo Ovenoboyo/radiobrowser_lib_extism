@@ -7,6 +7,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let config = api.get_server_config().await?;
     println!("{:#?}", config);
     let countries = api.get_countries().await?;
-    println!("{:?}", countries);
+    println!("{:#?}", countries);
+    let stations = api.search().name("jazz").send().await?;
+    println!("{:#?}", stations);
     Ok(())
 }
