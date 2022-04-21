@@ -1,8 +1,9 @@
-use crate::CountrySearchBuilder;
-use crate::StationSearchBuilder;
+use crate::external::post_api;
 use crate::ApiConfig;
 use crate::ApiCountry;
-use crate::external::post_api;
+use crate::CountrySearchBuilder;
+use crate::LanguageSearchBuilder;
+use crate::StationSearchBuilder;
 
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
@@ -50,12 +51,16 @@ impl RadioBrowserAPI {
         Ok(self.post_api("/json/config").await?)
     }
 
-    pub fn search(&self) -> StationSearchBuilder {
+    pub fn get_stations(&self) -> StationSearchBuilder {
         StationSearchBuilder::new(self.clone())
     }
 
-    pub fn get_countries(&mut self) -> CountrySearchBuilder {
+    pub fn get_countries(&self) -> CountrySearchBuilder {
         CountrySearchBuilder::new(self.clone())
+    }
+
+    pub fn get_languages(&self) -> LanguageSearchBuilder {
+        LanguageSearchBuilder::new(self.clone())
     }
 
     pub async fn send<P: AsRef<str>, Q: DeserializeOwned>(

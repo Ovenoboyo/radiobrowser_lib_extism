@@ -2,6 +2,7 @@ mod api;
 mod external;
 mod stationsearchbuilder;
 mod countrysearchbuilder;
+mod languagesearchbuilder;
 mod structs;
 
 pub use api::RadioBrowserAPI;
@@ -13,3 +14,4 @@ pub use structs::ApiStreamingServer;
 pub use stationsearchbuilder::StationSearchBuilder;
 pub use stationsearchbuilder::StationOrder;
 pub use countrysearchbuilder::CountrySearchBuilder;
+pub use languagesearchbuilder::LanguageSearchBuilder;
