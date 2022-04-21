@@ -2,8 +2,12 @@
 name = "radiobrowser"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+keywords = ["audio", "api", "radiobrowser"]
+categories = ["multimedia::audio", "multimedia", "api-bindings"]
+documentation = "https://docs.rs/radiobrowser"
+readme = "README.md"
+repository = "https://gitlab.com/radiobrowser/radiobrowser-lib-rust"
 
 [dependencies]
 async-std = { version = "1.11.0", features = ["attributes", "tokio1"] }
