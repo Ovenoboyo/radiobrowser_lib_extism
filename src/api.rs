@@ -4,6 +4,7 @@ use crate::ApiCountry;
 use crate::CountrySearchBuilder;
 use crate::LanguageSearchBuilder;
 use crate::StationSearchBuilder;
+use crate::TagSearchBuilder;
 
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
@@ -61,6 +62,10 @@ impl RadioBrowserAPI {
 
     pub fn get_languages(&self) -> LanguageSearchBuilder {
         LanguageSearchBuilder::new(self.clone())
+    }
+
+    pub fn get_tags(&self) -> TagSearchBuilder {
+        TagSearchBuilder::new(self.clone())
     }
 
     pub async fn send<P: AsRef<str>, Q: DeserializeOwned>(

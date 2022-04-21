@@ -56,6 +56,12 @@ pub struct ApiLanguage {
     pub stationcount: u32,
 }
 
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiTag {
+    pub name: String,
+    pub stationcount: u32,
+}
+
 #[derive(PartialEq, Deserialize, Debug)]
 pub struct ApiStreamingServer {
     pub uuid: String,

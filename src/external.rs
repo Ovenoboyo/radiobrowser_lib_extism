@@ -8,7 +8,7 @@ pub async fn post_api<P: DeserializeOwned, A: AsRef<str>, B: AsRef<str>>(
     endpoint: B,
     mapjson: HashMap<String, String>,
 ) -> Result<P, Box<dyn Error>> {
-    static APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
+    static APP_USER_AGENT: &str = concat!("radiobrowser-lib-rust/", env!("CARGO_PKG_VERSION"),);
 
     let client = reqwest::Client::builder()
         .user_agent(APP_USER_AGENT)
