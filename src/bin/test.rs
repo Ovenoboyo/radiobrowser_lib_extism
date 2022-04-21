@@ -1,14 +1,23 @@
+use futures::join;
 use radiobrowser_lib_rust::RadioBrowserAPI;
+use radiobrowser_lib_rust::StationOrder;
 use std::error::Error;
 
 #[async_std::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let mut api = RadioBrowserAPI::new().await?;
-    let config = api.get_server_config().await?;
-    println!("{:#?}", config);
-    let countries = api.get_countries().await?;
-    println!("{:#?}", countries);
-    let stations = api.search().name("jazz").send().await?;
-    println!("{:#?}", stations);
+    let countries = api.get_countries().filter("a").send();
+    let stations = api
+        .search()
+        .name("jazz")
+        .reverse(true)
+        .order(StationOrder::Clickcount)
+        .send();
+    let config = api.get_server_config();
+    let (stations, config, countries) = join!(stations, config, countries);
+
+    println!("Config: {:#?}", config?);
+    println!("Countries found: {}", countries?.len());
+    println!("Stations found: {}", stations?.len());
     Ok(())
 }
