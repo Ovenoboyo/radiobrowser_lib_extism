@@ -1,6 +1,10 @@
-//! 
+//! Client library for the <https://api.radio-browser.info> API
 //!
 //! # Example blocking
+//! It needs to have the feature "blocking" enabled.
+//! ```toml
+//! radiobrowser = { version = "*", features = ["blocking"] }
+//! ```
 //! ```rust
 //! use radiobrowser::blocking::RadioBrowserAPI;
 //! use std::error::Error;
