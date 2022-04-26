@@ -1,6 +1,5 @@
 use crate::external::post_api;
 use crate::ApiConfig;
-use crate::ApiCountry;
 use crate::CountrySearchBuilder;
 use crate::LanguageSearchBuilder;
 use crate::StationSearchBuilder;
@@ -12,6 +11,8 @@ use std::error::Error;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+
+use log::trace;
 
 use async_std_resolver::proto::rr::RecordType;
 use async_std_resolver::proto::xfer::DnsRequestOptions;
@@ -31,7 +32,8 @@ impl RadioBrowserAPI {
         })
     }
 
-    pub fn get_current_server(&mut self) -> String {
+    fn get_current_server(&mut self) -> String {
+        trace!("get_current_server()");
         if self.servers.len() > 0 {
             self.current = self.current % self.servers.len();
             format!("https://{}", self.servers[self.current])
@@ -40,7 +42,7 @@ impl RadioBrowserAPI {
         }
     }
 
-    pub async fn post_api<P: DeserializeOwned, A: AsRef<str>>(
+    async fn post_api<P: DeserializeOwned, A: AsRef<str>>(
         &mut self,
         endpoint: A,
     ) -> Result<P, Box<dyn Error>> {
@@ -76,16 +78,8 @@ impl RadioBrowserAPI {
         post_api(self.get_current_server(), endpoint, mapjson).await
     }
 
-    pub async fn get_countries_filtered<P: AsRef<str>>(
-        &mut self,
-        filter: P,
-    ) -> Result<Vec<ApiCountry>, Box<dyn Error>> {
-        Ok(self
-            .post_api(format!("/json/countries/{}", filter.as_ref()))
-            .await?)
-    }
-
     pub async fn get_servers() -> Result<Vec<String>, Box<dyn Error>> {
+        trace!("get_servers()");
         let resolver = resolver(
             config::ResolverConfig::default(),
             config::ResolverOpts::default(),
@@ -105,7 +99,7 @@ impl RadioBrowserAPI {
             .collect();
 
         list.shuffle(&mut thread_rng());
-        println!("Servers: {:?}", list);
+        trace!("Servers: {:?}", list);
         Ok(list)
     }
 }

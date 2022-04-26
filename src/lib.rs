@@ -1,6 +1,23 @@
 //! 
 //!
-//! # Example
+//! # Example blocking
+//! ```rust
+//! use radiobrowser::blocking::RadioBrowserAPI;
+//! use std::error::Error;
+//! 
+//! fn main() -> Result<(), Box<dyn Error>> {
+//!     let api = RadioBrowserAPI::new()?;
+//!     let servers = RadioBrowserAPI::get_servers()?;
+//!     println!("Servers: {:?}", servers);
+//!     let countries = api.get_countries().send()?;
+//!     println!("Countries: {:?}", countries);
+//!     let stations = api.get_stations().name("jazz").send()?;
+//!     println!("Stations: {:?}", stations);
+//!     Ok(())
+//! }
+//! ```
+//! 
+//! # Example async
 //! ```rust
 //! use std::error::Error;
 //! use futures::join;
@@ -30,6 +47,8 @@
 //! ```
 
 mod api;
+#[cfg(feature = "blocking")]
+pub mod blocking;
 mod external;
 mod stationsearchbuilder;
 mod countrysearchbuilder;
@@ -47,5 +66,8 @@ pub use structs::ApiTag;
 pub use stationsearchbuilder::StationSearchBuilder;
 pub use stationsearchbuilder::StationOrder;
 pub use countrysearchbuilder::CountrySearchBuilder;
+pub use countrysearchbuilder::CountryOrder;
 pub use languagesearchbuilder::LanguageSearchBuilder;
+pub use languagesearchbuilder::LanguageOrder;
 pub use tagsearchbuilder::TagSearchBuilder;
+pub use tagsearchbuilder::TagOrder;
