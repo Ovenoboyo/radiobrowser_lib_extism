@@ -1,7 +1,48 @@
-use serde::Deserialize;
 use chrono::DateTime;
 use chrono::Utc;
+use serde::Deserialize;
 
+/// Radiobrowser status and statistical information of single server.
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStatus {
+    pub supported_version: u32,
+    pub software_version: Option<String>,
+    pub status: String,
+    pub stations: u64,
+    pub stations_broken: u64,
+    pub tags: u64,
+    pub clicks_last_hour: u64,
+    pub clicks_last_day: u64,
+    pub languages: u64,
+    pub countries: u64,
+}
+
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStationAddResult {
+    pub ok: bool,
+    pub message: String,
+    pub uuid: String,
+}
+
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStationVoteResult {
+    pub ok: bool,
+    pub message: String,
+}
+
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStationClickResult {
+    pub ok: bool,
+    pub message: String,
+}
+
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiCodec {
+    name: String,
+    stationcount: u64,
+}
+
+/// A single station entry
 #[derive(PartialEq, Deserialize, Debug)]
 pub struct ApiStation {
     pub changeuuid: String,
@@ -42,6 +83,51 @@ pub struct ApiStation {
     pub has_extended_info: Option<bool>,
 }
 
+/// A single historical entry for a station
+#[derive(PartialEq, Deserialize, Debug)]
+pub struct ApiStationHistory {
+    pub changeuuid: String,
+    pub stationuuid: String,
+    pub name: String,
+    pub url: String,
+    pub homepage: String,
+    pub favicon: String,
+    pub tags: String,
+    pub country: String,
+    pub countrycode: String,
+    pub state: String,
+    pub language: String,
+    pub languagecodes: Option<String>,
+    pub votes: i32,
+    pub lastchangetime: String,
+    pub lastchangetime_iso8601: Option<DateTime<Utc>>,
+    pub geo_lat: Option<f64>,
+    pub geo_long: Option<f64>,
+}
+
+/// A click event for a station
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStationClick {
+    pub stationuuid: String,
+    pub clickuuid: String,
+    pub clicktimestamp_iso8601: Option<DateTime<Utc>>,
+    pub clicktimestamp: String,
+}
+
+/// A single step of a check action for a station
+#[derive(PartialEq, Eq, Deserialize, Debug)]
+pub struct ApiStationCheckStep {
+    pub stepuuid: String,
+    pub parent_stepuuid: Option<String>,
+    pub checkuuid: String,
+    pub stationuuid: String,
+    pub url: String,
+    pub urltype: Option<String>,
+    pub error: Option<String>,
+    pub creation_iso8601: DateTime<Utc>,
+}
+
+/// A single country
 #[derive(PartialEq, Eq, Deserialize, Debug)]
 pub struct ApiCountry {
     pub name: String,
@@ -49,6 +135,7 @@ pub struct ApiCountry {
     pub stationcount: u32,
 }
 
+/// A single language
 #[derive(PartialEq, Eq, Deserialize, Debug)]
 pub struct ApiLanguage {
     pub name: String,
@@ -56,13 +143,14 @@ pub struct ApiLanguage {
     pub stationcount: u32,
 }
 
+/// A single tag
 #[derive(PartialEq, Eq, Deserialize, Debug)]
 pub struct ApiTag {
     pub name: String,
     pub stationcount: u32,
 }
 
-#[derive(PartialEq, Deserialize, Debug)]
+#[derive(PartialEq, Eq, Deserialize, Debug)]
 pub struct ApiStreamingServer {
     pub uuid: String,
     pub url: String,
@@ -71,7 +159,7 @@ pub struct ApiStreamingServer {
     pub error: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(PartialEq, Eq, Deserialize, Debug)]
 pub struct ApiConfig {
     pub check_enabled: bool,
     pub prometheus_exporter_enabled: bool,

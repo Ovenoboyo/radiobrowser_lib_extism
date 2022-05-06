@@ -51,6 +51,7 @@
 //! ```
 
 mod api;
+#[doc()]
 #[cfg(feature = "blocking")]
 pub mod blocking;
 mod external;
@@ -66,7 +67,13 @@ pub use structs::ApiCountry;
 pub use structs::ApiLanguage;
 pub use structs::ApiStation;
 pub use structs::ApiStreamingServer;
+pub use structs::ApiStationClick;
+pub use structs::ApiStationHistory;
 pub use structs::ApiTag;
+pub use structs::ApiStatus;
+pub use structs::ApiStationAddResult;
+pub use structs::ApiStationClickResult;
+pub use structs::ApiStationVoteResult;
 pub use stationsearchbuilder::StationSearchBuilder;
 pub use stationsearchbuilder::StationOrder;
 pub use countrysearchbuilder::CountrySearchBuilder;

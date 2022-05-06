@@ -1,45 +1,21 @@
-/*
-use futures::join;
-use radiobrowser::RadioBrowserAPI;
-use radiobrowser::StationOrder;
-use std::error::Error;
-
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let mut api = RadioBrowserAPI::new().await?;
-    let countries = api.get_countries().send();
-    let languages = api.get_languages().send();
-    let tags = api.get_tags().filter("jazz").send();
-    let stations = api
-        .get_stations()
-        .name("jazz")
-        .reverse(true)
-        .order(StationOrder::Clickcount)
-        .send();
-    let config = api.get_server_config();
-    let (stations, config, countries, languages, tags) = join!(stations, config, countries, languages, tags);
-
-    println!("Config: {:#?}", config?);
-    println!("Countries found: {}", countries?.len());
-    println!("Languages found: {}", languages?.len());
-    let tags = tags?;
-    println!("Tags found: {}", tags.len());
-    println!("{:?}", tags);
-    println!("Stations found: {}", stations?.len());
-    Ok(())
-}
-*/
-
 use radiobrowser::blocking::RadioBrowserAPI;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let api = RadioBrowserAPI::new()?;
+    let mut api = RadioBrowserAPI::new()?;
     let servers = RadioBrowserAPI::get_servers()?;
     println!("Servers: {:?}", servers);
+    let status = api.get_server_status()?;
+    println!("Status: {:#?}", status);
+    let config = api.get_server_config()?;
+    println!("Config: {:#?}", config);
     let countries = api.get_countries().send()?;
-    println!("Countries: {:?}", countries);
+    println!("Countries: {:?}", countries.len());
     let stations = api.get_stations().name("jazz").send()?;
-    println!("Stations: {:?}", stations);
+    println!("Stations with name containing 'jazz': {:?}", stations.len());
+    let vote_result = api.station_vote(&stations[0].stationuuid)?;
+    println!("Stations voted result: {:?}", vote_result);
+    let click_result = api.station_click(&stations[0].stationuuid)?;
+    println!("Stations clicked result: {:?}", click_result);
     Ok(())
 }

@@ -1,3 +1,6 @@
+use crate::ApiStationClickResult;
+use crate::ApiStationVoteResult;
+use crate::ApiStatus;
 use crate::external::post_api;
 use crate::ApiConfig;
 use crate::CountrySearchBuilder;
@@ -18,6 +21,21 @@ use async_std_resolver::proto::rr::RecordType;
 use async_std_resolver::proto::xfer::DnsRequestOptions;
 use async_std_resolver::{config, resolver};
 
+
+/// RadioBrowser client for async communication
+/// 
+/// It uses crate:async_std
+/// 
+/// Example
+/// ```rust
+/// use std::error::Error;
+/// use radiobrowser::RadioBrowserAPI;
+/// #[async_std::main]
+/// async fn main() -> Result<(), Box<dyn Error>> {
+///     let mut api = RadioBrowserAPI::new().await?;
+///     Ok(())
+/// }
+/// ```
 #[derive(Clone, Debug)]
 pub struct RadioBrowserAPI {
     servers: Vec<String>,
@@ -25,6 +43,9 @@ pub struct RadioBrowserAPI {
 }
 
 impl RadioBrowserAPI {
+    /// Create a new instance of a radiobrowser api client.
+    /// It will fetch a list of radiobrowser server with get_servers()
+    /// and save it internally.
     pub async fn new() -> Result<Self, Box<dyn Error>> {
         Ok(RadioBrowserAPI {
             servers: RadioBrowserAPI::get_servers().await?,
@@ -52,6 +73,20 @@ impl RadioBrowserAPI {
 
     pub async fn get_server_config(&mut self) -> Result<ApiConfig, Box<dyn Error>> {
         Ok(self.post_api("/json/config").await?)
+    }
+
+    pub async fn get_server_status(&mut self) -> Result<ApiStatus, Box<dyn Error>> {
+        Ok(self.post_api("/json/stats").await?)
+    }
+
+    /// Add a click to a station found by stationuuid
+    pub async fn station_click<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationClickResult, Box<dyn Error>> {
+        Ok(self.post_api(format!("/json/url/{}",stationuuid.as_ref())).await?)
+    }
+
+    /// Add a vote to a station found by a stationuuid
+    pub async fn station_vote<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationVoteResult, Box<dyn Error>> {
+        Ok(self.post_api(format!("/json/vote/{}",stationuuid.as_ref())).await?)
     }
 
     pub fn get_stations(&self) -> StationSearchBuilder {

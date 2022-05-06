@@ -2,6 +2,10 @@ use crate::blocking::stationsearchbuilder::StationSearchBuilder;
 use crate::blocking::CountrySearchBuilder;
 use crate::blocking::LanguageSearchBuilder;
 use crate::blocking::TagSearchBuilder;
+use crate::ApiStationClickResult;
+use crate::ApiStationVoteResult;
+use crate::ApiStatus;
+use crate::ApiConfig;
 
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
@@ -18,6 +22,24 @@ impl RadioBrowserAPI {
     pub fn new() -> Result<Self, Box<dyn Error>> {
         task::block_on(async { crate::RadioBrowserAPI::new().await })
             .map(|api| RadioBrowserAPI { api })
+    }
+
+    pub fn get_server_status(&mut self) -> Result<ApiStatus, Box<dyn Error>> {
+        task::block_on(async { self.api.get_server_status().await })
+    }
+
+    pub fn get_server_config(&mut self) -> Result<ApiConfig, Box<dyn Error>> {
+        task::block_on(async { self.api.get_server_config().await })
+    }
+
+    /// Add a click to a station found by stationuuid
+    pub fn station_click<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationClickResult, Box<dyn Error>> {
+        task::block_on(async { self.api.station_click(stationuuid).await })
+    }
+
+    /// Add a vote to a station found by a stationuuid
+    pub fn station_vote<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationVoteResult, Box<dyn Error>> {
+        task::block_on(async { self.api.station_vote(stationuuid).await })
     }
 
     pub fn get_stations(&self) -> StationSearchBuilder {
