@@ -79,9 +79,11 @@ impl StationSearchBuilder {
         }
     }
 
-    /*
-    tagList 		STRING, STRING, ... 	OPTIONAL. , a comma-separated list of tag. It can also be an array of string in JSON HTTP POST parameters. All tags in list have to match.
-    */
+    pub fn tag_list(self, tags: Vec<&str>) -> Self {
+        StationSearchBuilder {
+            builder: self.builder.tag_list(tags),
+        }
+    }
 
     pub fn codec<P: AsRef<str>>(self, codec: P) -> Self {
         StationSearchBuilder {
@@ -89,12 +91,13 @@ impl StationSearchBuilder {
         }
     }
 
-    pub fn bitrate_min<P: AsRef<str>>(self, bitrate_min: P) -> Self {
+    pub fn bitrate_min(self, bitrate_min: u16) -> Self {
         StationSearchBuilder {
             builder: self.builder.bitrate_min(bitrate_min),
         }
     }
-    pub fn bitrate_max<P: AsRef<str>>(self, bitrate_max: P) -> Self {
+
+    pub fn bitrate_max(self, bitrate_max: u16) -> Self {
         StationSearchBuilder {
             builder: self.builder.bitrate_max(bitrate_max),
         }

@@ -1,4 +1,6 @@
+#[cfg(feature = "chrono")]
 use chrono::DateTime;
+#[cfg(feature = "chrono")]
 use chrono::Utc;
 use serde::Deserialize;
 
@@ -61,20 +63,30 @@ pub struct ApiStation {
     pub language: String,
     pub languagecodes: Option<String>,
     pub votes: i32,
-    pub lastchangetime: String,
+    #[cfg(feature = "chrono")]
     pub lastchangetime_iso8601: Option<DateTime<Utc>>,
+    #[cfg(not(feature = "chrono"))]
+    pub lastchangetime_iso8601: Option<String>,
     pub codec: String,
     pub bitrate: u32,
     pub hls: i8,
     pub lastcheckok: i8,
-    pub lastchecktime: String,
+    #[cfg(feature = "chrono")]
     pub lastchecktime_iso8601: Option<DateTime<Utc>>,
-    pub lastcheckoktime: String,
+    #[cfg(feature = "chrono")]
     pub lastcheckoktime_iso8601: Option<DateTime<Utc>>,
-    pub lastlocalchecktime: String,
+    #[cfg(feature = "chrono")]
     pub lastlocalchecktime_iso8601: Option<DateTime<Utc>>,
-    pub clicktimestamp: String,
+    #[cfg(feature = "chrono")]
     pub clicktimestamp_iso8601: Option<DateTime<Utc>>,
+    #[cfg(not(feature = "chrono"))]
+    pub lastchecktime_iso8601: Option<String>,
+    #[cfg(not(feature = "chrono"))]
+    pub lastcheckoktime_iso8601: Option<String>,
+    #[cfg(not(feature = "chrono"))]
+    pub lastlocalchecktime_iso8601: Option<String>,
+    #[cfg(not(feature = "chrono"))]
+    pub clicktimestamp_iso8601: Option<String>,
     pub clickcount: u32,
     pub clicktrend: i32,
     pub ssl_error: Option<u8>,
@@ -99,8 +111,10 @@ pub struct ApiStationHistory {
     pub language: String,
     pub languagecodes: Option<String>,
     pub votes: i32,
-    pub lastchangetime: String,
+    #[cfg(feature = "chrono")]
     pub lastchangetime_iso8601: Option<DateTime<Utc>>,
+    #[cfg(not(feature = "chrono"))]
+    pub lastchangetime_iso8601: Option<String>,
     pub geo_lat: Option<f64>,
     pub geo_long: Option<f64>,
 }
@@ -110,8 +124,10 @@ pub struct ApiStationHistory {
 pub struct ApiStationClick {
     pub stationuuid: String,
     pub clickuuid: String,
+    #[cfg(feature = "chrono")]
     pub clicktimestamp_iso8601: Option<DateTime<Utc>>,
-    pub clicktimestamp: String,
+    #[cfg(not(feature = "chrono"))]
+    pub clicktimestamp_iso8601: Option<String>,
 }
 
 /// A single step of a check action for a station
@@ -124,7 +140,10 @@ pub struct ApiStationCheckStep {
     pub url: String,
     pub urltype: Option<String>,
     pub error: Option<String>,
+    #[cfg(feature = "chrono")]
     pub creation_iso8601: DateTime<Utc>,
+    #[cfg(not(feature = "chrono"))]
+    pub creation_iso8601: String,
 }
 
 /// A single country

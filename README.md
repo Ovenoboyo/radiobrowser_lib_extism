@@ -9,6 +9,10 @@ Client library for radio-browser.info and other radio-browser-rust servers
 - [x] Station actions: click, vote
 - [ ] Add streams
 
+## Crate features
+* "blocking" - support for non-async (blocking) mode
+* "chrono" - return DateTime<UTC> objects instead of strings
+
 ## Getting started (Blocking)
 ### Example:
 It needs to have the feature "blocking" enabled.

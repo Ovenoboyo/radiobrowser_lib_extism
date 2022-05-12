@@ -29,7 +29,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("{:?}", tags);
     let stations = stations?;
     println!("Stations found: {}", stations.len());
-
+    println!("First found station: {:#?}", stations[0]);
+    println!("First found station: {:#?}", stations[0].clicktimestamp_iso8601);
     let vote_result = api.station_vote(&stations[0].stationuuid).await?;
     println!("Stations voted result: {:?}", vote_result);
     let click_result = api.station_click(&stations[0].stationuuid).await?;

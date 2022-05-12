@@ -133,9 +133,11 @@ impl StationSearchBuilder {
         self
     }
 
-    /*
-    tagList 		STRING, STRING, ... 	OPTIONAL. , a comma-separated list of tag. It can also be an array of string in JSON HTTP POST parameters. All tags in list have to match.
-    */
+    pub fn tag_list(mut self, tags: Vec<&str>) -> Self {
+        self.map
+            .insert(String::from("tagList"), tags.join(","));
+        self
+    }
 
     pub fn codec<P: AsRef<str>>(mut self, codec: P) -> Self {
         self.map
@@ -143,14 +145,15 @@ impl StationSearchBuilder {
         self
     }
 
-    pub fn bitrate_min<P: AsRef<str>>(mut self, bitrate_min: P) -> Self {
+    pub fn bitrate_min(mut self, bitrate_min: u16) -> Self {
         self.map
-            .insert(String::from("bitrateMin"), bitrate_min.as_ref().to_string());
+            .insert(String::from("bitrateMin"), bitrate_min.to_string());
         self
     }
-    pub fn bitrate_max<P: AsRef<str>>(mut self, bitrate_max: P) -> Self {
+
+    pub fn bitrate_max(mut self, bitrate_max: u16) -> Self {
         self.map
-            .insert(String::from("bitrateMax"), bitrate_max.as_ref().to_string());
+            .insert(String::from("bitrateMax"), bitrate_max.to_string());
         self
     }
 
