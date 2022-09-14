@@ -11,7 +11,7 @@ Client library for radio-browser.info and other radio-browser-rust servers
 
 ## Crate features
 * "blocking" - support for non-async (blocking) mode
-* "chrono" - return DateTime<UTC> objects instead of strings
+* "chrono" - return DateTime objects instead of strings
 
 ## Getting started (Blocking)
 ### Example:

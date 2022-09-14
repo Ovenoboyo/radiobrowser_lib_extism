@@ -1,6 +1,6 @@
 [package]
 name = "radiobrowser"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["segler_alex <segler_alex@web.de>"]
 edition = "2021"
 license = "MIT"
@@ -12,14 +12,14 @@ readme = "README.md"
 repository = "https://gitlab.com/radiobrowser/radiobrowser-lib-rust"
 
 [dependencies]
-async-std = { version = "1.11.0", features = ["attributes", "tokio1"] }
-async-std-resolver = "0.21.2"
-chrono = { version = "0.4.19", features = ["serde"], optional = true }
-futures = { version = "0.3.21" }
+async-std = { version = "1.12.0", features = ["attributes", "tokio1"] }
+async-std-resolver = "0.22.0"
+chrono = { version = "0.4.22", features = ["serde"], optional = true }
+futures = { version = "0.3.24" }
 log = { version = "0.4.17" }
 rand = { version = "0.8.5" }
-reqwest = { version = "0.11.10", features = ["json"] }
-serde = { version = "1.0.137", features = ["derive"] }
+reqwest = { version = "0.11.11", features = ["json"] }
+serde = { version = "1.0.144", features = ["derive"] }
 
 [features]
 default = ["chrono", "blocking"]

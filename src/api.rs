@@ -18,9 +18,7 @@ use rand::thread_rng;
 use log::trace;
 
 use async_std_resolver::proto::rr::RecordType;
-use async_std_resolver::proto::xfer::DnsRequestOptions;
 use async_std_resolver::{config, resolver};
-
 
 /// RadioBrowser client for async communication
 /// 
@@ -124,7 +122,6 @@ impl RadioBrowserAPI {
             .lookup(
                 "_api._tcp.radio-browser.info",
                 RecordType::SRV,
-                DnsRequestOptions::default(),
             )
             .await?;
         let mut list: Vec<String> = response
