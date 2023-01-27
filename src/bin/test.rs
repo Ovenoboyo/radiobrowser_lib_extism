@@ -3,7 +3,7 @@ use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut api = RadioBrowserAPI::new()?;
-    let servers = RadioBrowserAPI::get_servers()?;
+    let servers = RadioBrowserAPI::get_default_servers()?;
     println!("Servers: {:?}", servers);
     let status = api.get_server_status()?;
     println!("Status: {:#?}", status);

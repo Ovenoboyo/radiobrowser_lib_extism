@@ -43,11 +43,29 @@ pub struct RadioBrowserAPI {
 
 impl RadioBrowserAPI {
     /// Create a new instance of a radiobrowser api client.
-    /// It will fetch a list of radiobrowser server with get_servers()
+    /// It will fetch a list of radiobrowser server with get_default_servers()
     /// and save it internally.
     pub async fn new() -> Result<Self, Box<dyn Error>> {
         Ok(RadioBrowserAPI {
-            servers: RadioBrowserAPI::get_servers().await?,
+            servers: RadioBrowserAPI::get_default_servers().await?,
+            current: 0,
+        })
+    }
+
+    /// Create a new instance of a radiobrowser api client from
+    /// a single dns name. Use this is you want to connect to a single named server.
+    pub async fn new_from_dns_a<P: AsRef<str>>(dnsname: P) -> Result<Self, Box<dyn Error>> {
+        Ok(RadioBrowserAPI {
+            servers: vec![dnsname.as_ref().to_string()],
+            current: 0,
+        })
+    }
+
+    /// Create a new instance of a radiobrowser api client from
+    /// a dns srv record which may have multiple dns A/AAAA records.
+    pub async fn new_from_dns_srv<P: AsRef<str>>(srvname: P) -> Result<Self, Box<dyn Error>> {
+        Ok(RadioBrowserAPI {
+            servers: RadioBrowserAPI::get_servers_from_dns_srv(srvname).await?,
             current: 0,
         })
     }
@@ -120,8 +138,13 @@ impl RadioBrowserAPI {
         post_api(self.get_current_server(), endpoint, mapjson).await
     }
 
-    pub async fn get_servers() -> Result<Vec<String>, Box<dyn Error>> {
-        trace!("get_servers()");
+    pub async fn get_default_servers() -> Result<Vec<String>, Box<dyn Error>> {
+        trace!("get_default_servers()");
+        RadioBrowserAPI::get_servers_from_dns_srv("_api._tcp.radio-browser.info").await
+    }
+
+    async fn get_servers_from_dns_srv<P: AsRef<str>>(srvname: P) -> Result<Vec<String>, Box<dyn Error>> {
+        trace!("get_servers_from_dns_srv()");
         let resolver = resolver(
             config::ResolverConfig::default(),
             config::ResolverOpts::default(),
@@ -129,7 +152,7 @@ impl RadioBrowserAPI {
         .await?;
         let response = resolver
             .lookup(
-                "_api._tcp.radio-browser.info",
+                srvname.as_ref(),
                 RecordType::SRV,
             )
             .await?;

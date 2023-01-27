@@ -25,6 +25,16 @@ impl RadioBrowserAPI {
             .map(|api| RadioBrowserAPI { api })
     }
 
+    pub fn new_from_dns_a<P: AsRef<str>>(dnsname: P) -> Result<Self, Box<dyn Error>> {
+        task::block_on(async { crate::RadioBrowserAPI::new_from_dns_a(dnsname).await })
+            .map(|api| RadioBrowserAPI { api })
+    }
+
+    pub fn new_from_dns_srv<P: AsRef<str>>(srvname: P) -> Result<Self, Box<dyn Error>> {
+        task::block_on(async { crate::RadioBrowserAPI::new_from_dns_srv(srvname).await })
+            .map(|api| RadioBrowserAPI { api })
+    }
+
     pub fn get_server_status(&mut self) -> Result<ApiStatus, Box<dyn Error>> {
         task::block_on(async { self.api.get_server_status().await })
     }
@@ -71,7 +81,7 @@ impl RadioBrowserAPI {
         task::block_on(async { self.api.send(endpoint, mapjson).await })
     }
 
-    pub fn get_servers() -> Result<Vec<String>, Box<dyn Error>> {
-        task::block_on(async { crate::RadioBrowserAPI::get_servers().await })
+    pub fn get_default_servers() -> Result<Vec<String>, Box<dyn Error>> {
+        task::block_on(async { crate::RadioBrowserAPI::get_default_servers().await })
     }
 }
