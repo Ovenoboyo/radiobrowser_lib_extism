@@ -1,4 +1,5 @@
 use crate::ApiStationClickResult;
+use crate::ApiStationHistory;
 use crate::ApiStationVoteResult;
 use crate::ApiStatus;
 use crate::external::post_api;
@@ -67,6 +68,14 @@ impl RadioBrowserAPI {
     ) -> Result<P, Box<dyn Error>> {
         let mapjson = HashMap::new();
         post_api(self.get_current_server(), endpoint.as_ref(), mapjson).await
+    }
+
+    pub async fn get_station_changes(&mut self, limit: u64, last_change_uuid: Option<String>) -> Result<Vec<ApiStationHistory>, Box<dyn Error>> {
+        let query = match last_change_uuid {
+            Some(uuid) => format!("/json/stations/changed?limit={}&lastchangeuuid={}", limit, uuid),
+            None => format!("/json/stations/changed?limit={}", limit)
+        };
+        Ok(self.post_api(query).await?)
     }
 
     pub async fn get_server_config(&mut self) -> Result<ApiConfig, Box<dyn Error>> {

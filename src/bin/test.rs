@@ -19,5 +19,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("Stations voted result: {:?}", vote_result);
     let click_result = api.station_click(&stations[0].stationuuid)?;
     println!("Stations clicked result: {:?}", click_result);
+    let station_changes = api.get_station_changes(1,None)?;
+    println!("Station changes result: {:#?}", station_changes);
     Ok(())
 }

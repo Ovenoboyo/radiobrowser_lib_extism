@@ -1,3 +1,4 @@
+use crate::ApiStationHistory;
 use crate::blocking::stationsearchbuilder::StationSearchBuilder;
 use crate::blocking::CountrySearchBuilder;
 use crate::blocking::LanguageSearchBuilder;
@@ -26,6 +27,10 @@ impl RadioBrowserAPI {
 
     pub fn get_server_status(&mut self) -> Result<ApiStatus, Box<dyn Error>> {
         task::block_on(async { self.api.get_server_status().await })
+    }
+
+    pub fn get_station_changes(&mut self, limit: u64, last_change_uuid: Option<String>) -> Result<Vec<ApiStationHistory>, Box<dyn Error>> {
+        task::block_on(async { self.api.get_station_changes(limit, last_change_uuid).await })
     }
 
     pub fn get_server_config(&mut self) -> Result<ApiConfig, Box<dyn Error>> {
