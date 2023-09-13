@@ -149,7 +149,7 @@ impl RadioBrowserAPI {
             config::ResolverConfig::default(),
             config::ResolverOpts::default(),
         )
-        .await?;
+        .await;
         let response = resolver
             .lookup(
                 srvname.as_ref(),
