@@ -25,10 +25,10 @@ use radiobrowser::blocking::RadioBrowserAPI;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let api = RadioBrowserAPI::new()?;
+    let mut api = RadioBrowserAPI::new()?;
     let servers = RadioBrowserAPI::get_servers()?;
     println!("Servers: {:?}", servers);
-    let status = RadioBrowserAPI::get_server_status()?;
+    let status = api.get_server_status()?;
     println!("Status: {:?}", status);
     let countries = api.get_countries().send()?;
     println!("Countries: {:?}", countries);
