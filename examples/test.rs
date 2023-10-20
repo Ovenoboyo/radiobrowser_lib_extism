@@ -1,7 +1,6 @@
-use radiobrowser::blocking::RadioBrowserAPI;
-use std::error::Error;
+use radiobrowser::{blocking::RadioBrowserAPI, RbError};
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), RbError> {
     let mut api = RadioBrowserAPI::new()?;
     let servers = RadioBrowserAPI::get_default_servers()?;
     println!("Servers: {:?}", servers);

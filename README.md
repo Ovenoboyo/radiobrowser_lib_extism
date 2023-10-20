@@ -24,7 +24,7 @@ radiobrowser = { version = "*", features = ["blocking"] }
 use radiobrowser::blocking::RadioBrowserAPI;
 use std::error::Error;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), RbError> {
     let mut api = RadioBrowserAPI::new()?;
     let servers = RadioBrowserAPI::get_default_servers()?;
     println!("Servers: {:?}", servers);
@@ -50,7 +50,7 @@ use radiobrowser::StationOrder;
 use std::error::Error;
 
 #[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), RbError> {
     let mut api = RadioBrowserAPI::new().await?;
     let stations = api
         .get_stations()

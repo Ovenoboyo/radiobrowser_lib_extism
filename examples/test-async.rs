@@ -1,10 +1,10 @@
 use futures::join;
 use radiobrowser::RadioBrowserAPI;
+use radiobrowser::RbError;
 use radiobrowser::StationOrder;
-use std::error::Error;
 
 #[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), RbError> {
     let mut api = RadioBrowserAPI::new().await?;
     let countries = api.get_countries().send();
     let languages = api.get_languages().send();

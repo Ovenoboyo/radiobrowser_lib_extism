@@ -7,9 +7,9 @@
 //! ```
 //! ```rust
 //! use radiobrowser::blocking::RadioBrowserAPI;
-//! use std::error::Error;
+//! use radiobrowser::RbError;
 //! 
-//! fn main() -> Result<(), Box<dyn Error>> {
+//! fn main() -> Result<(), RbError> {
 //!     let api = RadioBrowserAPI::new()?;
 //!     let servers = RadioBrowserAPI::get_default_servers()?;
 //!     println!("Servers: {:?}", servers);
@@ -23,13 +23,13 @@
 //! 
 //! # Example async
 //! ```rust
-//! use std::error::Error;
+//! use radiobrowser::RbError;
 //! use futures::join;
 //! use radiobrowser::RadioBrowserAPI;
 //! use radiobrowser::StationOrder;
 //! 
 //! #[async_std::main]
-//! async fn main() -> Result<(), Box<dyn Error>> {
+//! async fn main() -> Result<(), RbError> {
 //!     let mut api = RadioBrowserAPI::new().await?;
 //!     let countries = api.get_countries().send();
 //!     let languages = api.get_languages().send();
@@ -60,7 +60,9 @@ mod countrysearchbuilder;
 mod languagesearchbuilder;
 mod tagsearchbuilder;
 mod structs;
+mod rb_error;
 
+pub use rb_error::RbError;
 pub use api::RadioBrowserAPI;
 pub use structs::ApiConfig;
 pub use structs::ApiCountry;

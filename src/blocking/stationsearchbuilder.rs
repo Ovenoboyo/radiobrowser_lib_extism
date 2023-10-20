@@ -1,7 +1,6 @@
 use crate::structs::ApiStation;
-use crate::StationOrder;
+use crate::{StationOrder, RbError};
 use async_std::task;
-use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct StationSearchBuilder {
@@ -151,7 +150,7 @@ impl StationSearchBuilder {
         }
     }
 
-    pub fn send(self) -> Result<Vec<ApiStation>, Box<dyn Error>> {
+    pub fn send(self) -> Result<Vec<ApiStation>, RbError> {
         task::block_on(async { self.builder.send().await })
     }
 }

@@ -1,6 +1,5 @@
-use crate::ApiLanguage;
+use crate::{ApiLanguage, RbError};
 use async_std::task;
-use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct LanguageSearchBuilder {
@@ -48,7 +47,7 @@ impl LanguageSearchBuilder {
         }
     }
 
-    pub fn send(self) -> Result<Vec<ApiLanguage>, Box<dyn Error>> {
+    pub fn send(self) -> Result<Vec<ApiLanguage>, RbError> {
         task::block_on(async { self.builder.send().await })
     }
 }

@@ -1,6 +1,5 @@
-use crate::ApiCountry;
+use crate::{ApiCountry, RbError};
 use async_std::task;
-use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct CountrySearchBuilder {
@@ -48,7 +47,7 @@ impl CountrySearchBuilder {
         }
     }
 
-    pub fn send(self) -> Result<Vec<ApiCountry>, Box<dyn Error>> {
+    pub fn send(self) -> Result<Vec<ApiCountry>, RbError> {
         task::block_on(async { self.builder.send().await })
     }
 }

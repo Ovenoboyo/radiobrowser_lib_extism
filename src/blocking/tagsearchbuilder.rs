@@ -1,6 +1,5 @@
-use crate::ApiTag;
+use crate::{ApiTag, RbError};
 use async_std::task;
-use std::error::Error;
 
 #[derive(Clone, Debug)]
 pub struct TagSearchBuilder {
@@ -48,7 +47,7 @@ impl TagSearchBuilder {
         }
     }
 
-    pub fn send(self) -> Result<Vec<ApiTag>, Box<dyn Error>> {
+    pub fn send(self) -> Result<Vec<ApiTag>, RbError> {
         task::block_on(async { self.builder.send().await })
     }
 }

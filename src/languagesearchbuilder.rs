@@ -1,9 +1,8 @@
 use crate::ApiLanguage;
 use crate::RadioBrowserAPI;
+use crate::RbError;
 use std::fmt::Display;
-
 use std::collections::HashMap;
-use std::error::Error;
 
 pub enum LanguageOrder {
     Name,
@@ -69,7 +68,7 @@ impl LanguageSearchBuilder {
         self
     }
 
-    pub async fn send(mut self) -> Result<Vec<ApiLanguage>, Box<dyn Error>> {
+    pub async fn send(mut self) -> Result<Vec<ApiLanguage>, RbError> {
         if let Some(filter) = self.filter {
             Ok(self
                 .api

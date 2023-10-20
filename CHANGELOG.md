@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Replaced Box dyn Error with RbError enum
+
 ## [0.6.1] 2023-10-20
 
 ### Fixed

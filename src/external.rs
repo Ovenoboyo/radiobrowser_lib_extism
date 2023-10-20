@@ -1,13 +1,14 @@
 use reqwest;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
-use std::error::Error;
+
+use crate::RbError;
 
 pub async fn post_api<P: DeserializeOwned, A: AsRef<str>, B: AsRef<str>>(
     server: A,
     endpoint: B,
     mapjson: HashMap<String, String>,
-) -> Result<P, Box<dyn Error>> {
+) -> Result<P, RbError> {
     static APP_USER_AGENT: &str = concat!("radiobrowser-lib-rust/", env!("CARGO_PKG_VERSION"),);
 
     let client = reqwest::Client::builder()

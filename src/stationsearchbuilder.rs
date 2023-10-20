@@ -1,9 +1,9 @@
+use crate::RbError;
 use crate::api::RadioBrowserAPI;
 use crate::structs::ApiStation;
 use std::fmt::Display;
 
 use std::collections::HashMap;
-use std::error::Error;
 
 pub enum StationOrder {
     Name,
@@ -206,7 +206,7 @@ impl StationSearchBuilder {
         self
     }
 
-    pub async fn send(mut self) -> Result<Vec<ApiStation>, Box<dyn Error>> {
+    pub async fn send(mut self) -> Result<Vec<ApiStation>, RbError> {
         Ok(self.api.send("/json/stations/search", self.map).await?)
     }
 }

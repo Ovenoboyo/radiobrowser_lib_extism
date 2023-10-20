@@ -1,9 +1,8 @@
 use crate::ApiCountry;
 use crate::RadioBrowserAPI;
+use crate::RbError;
 use std::fmt::Display;
-
 use std::collections::HashMap;
-use std::error::Error;
 
 pub enum CountryOrder {
     Name,
@@ -69,7 +68,7 @@ impl CountrySearchBuilder {
         self
     }
 
-    pub async fn send(mut self) -> Result<Vec<ApiCountry>, Box<dyn Error>> {
+    pub async fn send(mut self) -> Result<Vec<ApiCountry>, RbError> {
         if let Some(filter) = self.filter {
             Ok(self
                 .api

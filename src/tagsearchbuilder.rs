@@ -1,9 +1,9 @@
 use crate::ApiTag;
 use crate::RadioBrowserAPI;
+use crate::RbError;
 use std::fmt::Display;
 
 use std::collections::HashMap;
-use std::error::Error;
 
 pub enum TagOrder {
     Name,
@@ -69,7 +69,7 @@ impl TagSearchBuilder {
         self
     }
 
-    pub async fn send(mut self) -> Result<Vec<ApiTag>, Box<dyn Error>> {
+    pub async fn send(mut self) -> Result<Vec<ApiTag>, RbError> {
         if let Some(filter) = self.filter {
             Ok(self
                 .api
