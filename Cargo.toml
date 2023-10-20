@@ -1,6 +1,6 @@
 [package]
 name = "radiobrowser"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["segler_alex <segler_alex@web.de>"]
 edition = "2021"
 license = "MIT"
