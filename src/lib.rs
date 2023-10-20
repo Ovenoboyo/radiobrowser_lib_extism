@@ -11,7 +11,7 @@
 //! 
 //! fn main() -> Result<(), Box<dyn Error>> {
 //!     let api = RadioBrowserAPI::new()?;
-//!     let servers = RadioBrowserAPI::get_servers()?;
+//!     let servers = RadioBrowserAPI::get_default_servers()?;
 //!     println!("Servers: {:?}", servers);
 //!     let countries = api.get_countries().send()?;
 //!     println!("Countries: {:?}", countries);
