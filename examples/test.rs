@@ -10,15 +10,25 @@ fn main() -> Result<(), RbError> {
     println!("Config: {:#?}", config);
     let countries = api.get_countries().send()?;
     println!("Countries: {:?}", countries.len());
-    let tags = vec!["jazz","classical"];
+    let tags = vec!["jazz", "classical"];
     let stations = api.get_stations().tag_list(tags).send()?;
-    println!("Stations with tags containing 'jazz' and 'classical': {:?}", stations.len());
-    println!("First found station: {:#?}", stations[0].clicktimestamp_iso8601);
+    println!(
+        "Stations with tags containing 'jazz' and 'classical': {:?}",
+        stations.len()
+    );
+    println!(
+        "First found station: {:#?}",
+        stations[0].clicktimestamp_iso8601
+    );
+    println!(
+        "First station JSON: {}",
+        serde_json::to_string(&stations[0]).expect("Failure")
+    );
     let vote_result = api.station_vote(&stations[0].stationuuid)?;
     println!("Stations voted result: {:?}", vote_result);
     let click_result = api.station_click(&stations[0].stationuuid)?;
     println!("Stations clicked result: {:?}", click_result);
-    let station_changes = api.get_station_changes(1,None)?;
+    let station_changes = api.get_station_changes(1, None)?;
     println!("Station changes result: {:#?}", station_changes);
     Ok(())
 }
