@@ -52,7 +52,7 @@
 
 mod api;
 #[doc()]
-#[cfg(feature = "blocking")]
+#[cfg(all(feature = "blocking", target_arch = "wasm32"))]
 pub mod blocking;
 mod external;
 mod stationsearchbuilder;

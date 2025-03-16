@@ -1,30 +1,34 @@
+use crate::external::post_api;
+use crate::ApiConfig;
 use crate::ApiStationClickResult;
 use crate::ApiStationHistory;
 use crate::ApiStationVoteResult;
 use crate::ApiStatus;
-use crate::RbError;
-use crate::external::post_api;
-use crate::ApiConfig;
 use crate::CountrySearchBuilder;
 use crate::LanguageSearchBuilder;
+use crate::RbError;
 use crate::StationSearchBuilder;
 use crate::TagSearchBuilder;
 
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 
+#[cfg(not(target_arch = "wasm32"))]
 use rand::seq::SliceRandom;
+#[cfg(not(target_arch = "wasm32"))]
 use rand::thread_rng;
 
 use log::trace;
 
+#[cfg(not(target_arch = "wasm32"))]
 use async_std_resolver::proto::rr::RecordType;
+#[cfg(not(target_arch = "wasm32"))]
 use async_std_resolver::{config, resolver};
 
 /// RadioBrowser client for async communication
-/// 
+///
 /// It uses crate:async_std
-/// 
+///
 /// Example
 /// ```rust
 /// use radiobrowser::RbError;
@@ -63,6 +67,7 @@ impl RadioBrowserAPI {
 
     /// Create a new instance of a radiobrowser api client from
     /// a dns srv record which may have multiple dns A/AAAA records.
+    #[cfg(not(target_arch = "wasm32"))]
     pub async fn new_from_dns_srv<P: AsRef<str>>(srvname: P) -> Result<Self, RbError> {
         Ok(RadioBrowserAPI {
             servers: RadioBrowserAPI::get_servers_from_dns_srv(srvname).await?,
@@ -88,10 +93,17 @@ impl RadioBrowserAPI {
         post_api(self.get_current_server(), endpoint.as_ref(), mapjson).await
     }
 
-    pub async fn get_station_changes(&mut self, limit: u64, last_change_uuid: Option<String>) -> Result<Vec<ApiStationHistory>, RbError> {
+    pub async fn get_station_changes(
+        &mut self,
+        limit: u64,
+        last_change_uuid: Option<String>,
+    ) -> Result<Vec<ApiStationHistory>, RbError> {
         let query = match last_change_uuid {
-            Some(uuid) => format!("/json/stations/changed?limit={}&lastchangeuuid={}", limit, uuid),
-            None => format!("/json/stations/changed?limit={}", limit)
+            Some(uuid) => format!(
+                "/json/stations/changed?limit={}&lastchangeuuid={}",
+                limit, uuid
+            ),
+            None => format!("/json/stations/changed?limit={}", limit),
         };
         Ok(self.post_api(query).await?)
     }
@@ -105,13 +117,23 @@ impl RadioBrowserAPI {
     }
 
     /// Add a click to a station found by stationuuid
-    pub async fn station_click<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationClickResult, RbError> {
-        Ok(self.post_api(format!("/json/url/{}",stationuuid.as_ref())).await?)
+    pub async fn station_click<P: AsRef<str>>(
+        &mut self,
+        stationuuid: P,
+    ) -> Result<ApiStationClickResult, RbError> {
+        Ok(self
+            .post_api(format!("/json/url/{}", stationuuid.as_ref()))
+            .await?)
     }
 
     /// Add a vote to a station found by a stationuuid
-    pub async fn station_vote<P: AsRef<str>>(&mut self, stationuuid: P) -> Result<ApiStationVoteResult, RbError> {
-        Ok(self.post_api(format!("/json/vote/{}",stationuuid.as_ref())).await?)
+    pub async fn station_vote<P: AsRef<str>>(
+        &mut self,
+        stationuuid: P,
+    ) -> Result<ApiStationVoteResult, RbError> {
+        Ok(self
+            .post_api(format!("/json/vote/{}", stationuuid.as_ref()))
+            .await?)
     }
 
     pub fn get_stations(&self) -> StationSearchBuilder {
@@ -140,9 +162,24 @@ impl RadioBrowserAPI {
 
     pub async fn get_default_servers() -> Result<Vec<String>, RbError> {
         trace!("get_default_servers()");
-        RadioBrowserAPI::get_servers_from_dns_srv("_api._tcp.radio-browser.info").await
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            RadioBrowserAPI::get_servers_from_dns_srv("_api._tcp.radio-browser.info").await
+        }
+
+        #[cfg(target_arch = "wasm32")]
+        {
+            RadioBrowserAPI::get_servers_from_http().await
+        }
     }
 
+    pub async fn get_servers_from_http() -> Result<Vec<String>, RbError> {
+        let response = reqwest::get("http://all.api.radio-browser.info/json/servers").await?;
+        let servers: Vec<String> = response.json().await?;
+        Ok(servers)
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
     async fn get_servers_from_dns_srv<P: AsRef<str>>(srvname: P) -> Result<Vec<String>, RbError> {
         trace!("get_servers_from_dns_srv()");
         let resolver = resolver(
@@ -150,12 +187,7 @@ impl RadioBrowserAPI {
             config::ResolverOpts::default(),
         )
         .await;
-        let response = resolver
-            .lookup(
-                srvname.as_ref(),
-                RecordType::SRV,
-            )
-            .await?;
+        let response = resolver.lookup(srvname.as_ref(), RecordType::SRV).await?;
         let mut list: Vec<String> = response
             .iter()
             .filter_map(|entry| entry.as_srv())

@@ -12,20 +12,24 @@ readme = "README.md"
 repository = "https://gitlab.com/radiobrowser/radiobrowser-lib-rust"
 
 [dependencies]
-async-std = { version = "1.12.0", features = ["attributes", "tokio1"] }
-async-std-resolver = "0.24.0"
 chrono = { version = "0.4.31", features = ["serde"], optional = true }
 log = { version = "0.4.20" }
 rand = { version = "0.8.5" }
-reqwest = { version = "0.11.22", default-features = false, features = ["json"] }
 serde = { version = "1.0.189", features = ["derive"] }
 serde_json = "1.0.108"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+reqwest = { git = "https://github.com/Ovenoboyo/reqwest_extism", default-features = false, features = ["json"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+async-std-resolver = "0.24.0"
+async-std = { version = "1.12.0", features = ["attributes", "tokio1"] }
 
 [dev-dependencies]
 futures = { version = "0.3.28" }
 
 [features]
-default = ["chrono", "blocking", "nativetls"]
+default = ["chrono", "nativetls"]
 default-rustls = ["chrono", "blocking", "rustls"]
 blocking = []
 nativetls = ["reqwest/default-tls"]
