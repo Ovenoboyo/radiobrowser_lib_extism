@@ -175,8 +175,11 @@ impl RadioBrowserAPI {
 
     pub async fn get_servers_from_http() -> Result<Vec<String>, RbError> {
         let response = reqwest::get("http://all.api.radio-browser.info/json/servers").await?;
-        let servers: Vec<String> = response.json().await?;
-        Ok(servers)
+        let servers: Vec<HashMap<String, String>> = response.json().await?;
+        Ok(servers
+            .into_iter()
+            .filter_map(|server| server.get("name").cloned())
+            .collect())
     }
 
     #[cfg(not(target_arch = "wasm32"))]
